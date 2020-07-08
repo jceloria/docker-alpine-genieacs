@@ -1,0 +1,49 @@
+#!/sbin/openrc-run
+
+user="${USER_ID:=nobody}"
+group="${GROUP_ID:=users}"
+
+start_pre()
+{
+	# Read any environment files if they exist
+	source /opt/genieacs/*.env
+
+	# Create the group if it doesn't already exist
+	group=$(getent group ${GROUP_ID} 2>/dev/null)
+	if [[ -z ${group} ]]; then
+		addgroup -Sg ${GROUP_ID} genieacs
+		group=$(getent group ${GROUP_ID} 2>/dev/null)
+	fi
+
+	# Create the user if it doesn't already exist
+	user=$(getent passwd ${USER_ID} 2>/dev/null)
+	if [[ -z ${user} ]]; then
+		adduser -h /opt/genieacs -G ${group%%:*} -SDH -u ${USER_ID} genieacs
+	fi
+
+	# Adjust permissions
+	chown -R "${USER_ID}":"${GROUP_ID}" /opt/genieacs
+	chmod -R g+rw /opt/genieacs
+}
+
+start() {
+	for command in genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui; do
+		ebegin "Starting ${command}"
+		start-stop-daemon --exec /opt/genieacs/bin/${command} \
+			--pidfile /run/${command}.pid --make-pidfile \
+			--background -u ${user} -g ${group} --start
+		eend $?
+	done
+}
+
+stop()
+{
+	local rc=0
+	for command in genieacs-cwmp genieacs-fs genieacs-nbi genieacs-ui; do
+		ebegin "Starting ${command}"
+		start-stop-daemon -Kq -p /run/${command}.pid
+	    rc=$?
+	    [ $rc -eq 0 ] && rm -f /run/${command}.pid
+		eend $rc "Failed to stop ${command}"
+	done
+}
