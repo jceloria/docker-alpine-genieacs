@@ -1,3 +1,3 @@
-# docker-alpine-genieacs - GenieACS in a alpine docker container
+# docker-alpine-genieacs - GenieACS running on alpine
 
 ![Docker](https://github.com/jceloria/docker-alpine-genieacs/workflows/Docker/badge.svg)
