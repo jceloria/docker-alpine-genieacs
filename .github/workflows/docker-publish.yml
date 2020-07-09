@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: alpine-ripper
+  IMAGE_NAME: alpine-genieacs
 
 jobs:
   # Run tests.
