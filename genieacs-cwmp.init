@@ -3,30 +3,30 @@
 : ${USER_ID:=nobody}
 : ${GROUP_ID:=users}
 
-pidfile=/run/${SVCNAME}/${SVCNAME}.pid
-command=/opt/genieacs/bin/${SVCNAME}
+pidfile="/run/${SVCNAME}/${SVCNAME}.pid"
+command="/opt/genieacs/bin/${SVCNAME}"
 start_stop_daemon_args="--user ${USER_ID} --group ${GROUP_ID}"
 
 start_pre() {
 	# Create the group if it doesn't already exist
-	group=$(getent group ${GROUP_ID})
-	[[ -z ${group} ]] && addgroup -Sg ${GROUP_ID} genieacs
-	GROUP_ID=$(_=$(getent group ${GROUP_ID}); echo ${_%%:*})
+	group=$(getent group "${GROUP_ID}")
+	[[ -z "${group}" ]] && addgroup -Sg "${GROUP_ID}" genieacs
+	GROUP_ID=$(_=$(getent group "${GROUP_ID}"); echo "${_%%:*}")
 
 	# Create the user if it doesn't already exist
-	user=$(getent passwd ${USER_ID})
-	[[ -z ${user} ]] && adduser -h /opt/genieacs -G ${group%%:*} -SDH -u ${USER_ID} genieacs
-	USER_ID=$(_=$(getent passwd ${USER_ID}); echo ${_%%:*})
+	user=$(getent passwd "${USER_ID}")
+	[[ -z "${user}" ]] && adduser -h /opt/genieacs -G "${group%%:*}" -SDH -u "${USER_ID}" genieacs
+	USER_ID=$(_=$(getent passwd "${USER_ID}"); echo "${_%%:*}")
 
-	checkpath -qqWo ${USER_ID}:${GROUP_ID} /opt/genieacs || \
-		chown -R ${USER_ID}:${GROUP_ID} /opt/genieacs
+	checkpath -qqWo "${USER_ID}:${GROUP_ID}" /opt/genieacs || \
+		chown -R "${USER_ID}:${GROUP_ID}" /opt/genieacs
 
 	# Read environment files if they exist
 	if [[ "$(echo /opt/genieacs/env/*.env)" != "/opt/genieacs/env/*.env" ]]; then
 		source /opt/genieacs/env/*.env
 	fi
 
-	checkpath -d -m 0755 -o "${user}":"${group}" "${pidfile%/*}"
+	checkpath -d -m 0755 -o "${USER_ID}:${GROUP_ID}" "${pidfile%/*}"
 }
 
 stop() {
