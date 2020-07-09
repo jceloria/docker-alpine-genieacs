@@ -1,12 +1,12 @@
 #!/sbin/openrc-run
 
-user="${USER_ID:=nobody}"
-group="${GROUP_ID:=users}"
+user=${USER_ID:=nobody}
+group=${GROUP_ID:=users}
 
 start_pre()
 {
 	# Read any environment files if they exist
-	source /opt/genieacs/*.env
+	for env in /opt/genieacs/*.env; do source ${env}; done
 
 	# Create the group if it doesn't already exist
 	group=$(getent group ${GROUP_ID} 2>/dev/null)
@@ -22,7 +22,7 @@ start_pre()
 	fi
 
 	# Adjust permissions
-	chown -R "${USER_ID}":"${GROUP_ID}" /opt/genieacs
+	chown -R ${USER_ID}:${GROUP_ID} /opt/genieacs
 	chmod -R g+rw /opt/genieacs
 }
 
@@ -43,7 +43,7 @@ stop()
 		ebegin "Starting ${command}"
 		start-stop-daemon -Kq -p /run/${command}.pid
 	    rc=$?
-	    [ $rc -eq 0 ] && rm -f /run/${command}.pid
-		eend $rc "Failed to stop ${command}"
+	    [[ ${rc} -eq 0 ]] && rm -f /run/${command}.pid
+		eend ${rc} "Failed to stop ${command}"
 	done
 }
