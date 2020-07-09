@@ -33,7 +33,7 @@ start() {
 		ebegin "Starting ${command}"
 		start-stop-daemon --exec /opt/genieacs/bin/${command} \
 			--pidfile /run/${command}.pid --make-pidfile \
-			--background -u ${user%%:*} -g ${group%%:*} --start
+			-u ${user%%:*} -g ${group%%:*} --start
 		eend $?
 	done
 }
