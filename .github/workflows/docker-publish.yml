@@ -14,7 +14,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: alpine-genieacs
+  IMAGE_NAME: genieacs
 
 jobs:
   # Run tests.
