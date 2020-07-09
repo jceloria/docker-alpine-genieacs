@@ -5,6 +5,7 @@
 
 pidfile="/run/${SVCNAME}/${SVCNAME}.pid"
 command="/opt/genieacs/bin/${SVCNAME}"
+command_background=yes
 start_stop_daemon_args="--user ${USER_ID} --group ${GROUP_ID}"
 
 start_pre() {
