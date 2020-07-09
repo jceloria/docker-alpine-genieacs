@@ -5,8 +5,10 @@ group=${GROUP_ID:=users}
 
 start_pre()
 {
-	# Read any environment files if they exist
-	for env in /opt/genieacs/*.env; do source ${env}; done
+	# Read environment files if they exist
+	if [[ "$(echo /opt/genieacs/env/*.env)" != "/opt/genieacs/env/*.env" ]]; then
+		source /opt/genieacs/env/*.env
+	fi
 
 	# Create the group if it doesn't already exist
 	group=$(getent group ${GROUP_ID} 2>/dev/null)
